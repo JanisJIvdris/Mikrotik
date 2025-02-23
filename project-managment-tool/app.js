@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const config = require("./config/config");
+const { sequelize } = require("./models");
 
 // Middleware
 app.use(cors());
@@ -19,3 +20,12 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connection has been established successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+})();
