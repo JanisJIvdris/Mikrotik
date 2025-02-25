@@ -6,6 +6,7 @@ const config = require("./config/config");
 
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
+const templateRoutes = require("./routes/templateRoutes");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
+app.use("/templates", templateRoutes);
 
 // Database Connection
 (async () => {
