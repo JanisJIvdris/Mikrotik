@@ -13,4 +13,18 @@ const sequelize = new Sequelize(
   }
 );
 
-module.exports = { sequelize };
+// Initialize models
+const User = require("./user")(sequelize);
+const Task = require("./task")(sequelize);
+const Template = require("./template")(sequelize);
+
+// Set up relationships
+User.hasMany(Task, { foreignKey: "assigneeId" });
+Task.belongsTo(User, { foreignKey: "assigneeId" });
+
+module.exports = {
+  sequelize,
+  User,
+  Task,
+  Template,
+};
