@@ -5,7 +5,7 @@ const { sequelize } = require("./models");
 const config = require("./config/config");
 
 const authRoutes = require("./routes/authRoutes");
-//const taskRoutes = require("./routes/taskRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use(express.json());
 
 // Routes
 app.use("/auth", authRoutes);
-//app.use("/tasks", taskRoutes);
+app.use("/tasks", taskRoutes);
 
 // Database Connection
 (async () => {
