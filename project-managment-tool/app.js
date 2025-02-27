@@ -25,9 +25,15 @@ app.use("/templates", templateRoutes);
     await sequelize.authenticate();
     console.log("Database connected successfully.");
 
-    await sequelize.sync();
-
-    console.log("Database synchronized.");
+    if (process.env.NODE_ENV === "development") {
+      // For development
+      await sequelize.sync({ alter: true });
+      console.log("Database synchronized (alter sync).");
+    } else {
+      // For production
+      await sequelize.sync();
+      console.log("Database synchronized (non-alter sync).");
+    }
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }
