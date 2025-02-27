@@ -2,16 +2,31 @@ const { Task } = require("../models");
 
 exports.createTask = async (req, res) => {
   try {
-    const { title, description, status, assigneeId } = req.body;
+    const {
+      title,
+      description,
+      status,
+      assigneeId,
+      priority,
+      dueDate,
+      projectId,
+    } = req.body;
+
     const newTask = await Task.create({
       title,
       description,
       status,
       assigneeId,
+      priority,
+      dueDate,
+      projectId,
     });
+
     return res.status(201).json(newTask);
   } catch (error) {
-    return res.status(500).json({ message: "Error creating task." });
+    return res
+      .status(500)
+      .json({ message: "Error creating task.", error: error.message });
   }
 };
 
@@ -42,17 +57,29 @@ exports.getTaskById = async (req, res) => {
 exports.updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, status, assigneeId } = req.body;
+    const {
+      title,
+      description,
+      status,
+      assigneeId,
+      priority,
+      dueDate,
+      projectId,
+    } = req.body;
+
     const [updated] = await Task.update(
-      { title, description, status, assigneeId },
+      { title, description, status, assigneeId, priority, dueDate, projectId },
       { where: { id } }
     );
+
     if (!updated) {
       return res.status(404).json({ message: "Task not found." });
     }
     return res.status(200).json({ message: "Task updated successfully." });
   } catch (error) {
-    return res.status(500).json({ message: "Error updating task." });
+    return res
+      .status(500)
+      .json({ message: "Error updating task.", error: error.message });
   }
 };
 

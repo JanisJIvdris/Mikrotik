@@ -13,10 +13,27 @@ module.exports = (sequelize) => {
     },
     description: {
       type: DataTypes.TEXT,
+      allowNull: true,
     },
     status: {
       type: DataTypes.ENUM("new", "in_progress", "completed"),
       defaultValue: "new",
+    },
+    assigneeId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    priority: {
+      type: DataTypes.ENUM("low", "medium", "high", "critical"),
+      defaultValue: "medium",
+    },
+    dueDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    projectId: {
+      type: DataTypes.UUID,
+      allowNull: true,
     },
   });
 
