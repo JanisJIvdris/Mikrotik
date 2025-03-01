@@ -1,0 +1,42 @@
+.task-table-wrapper {
+  margin-top: 20px;
+}
+
+.task-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.task-table th,
+.task-table td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+}
+
+.task-row:hover {
+  background-color: #f9fafb;
+}
+
+.expanded-row .expanded-content {
+  background-color: #f3f4f6;
+  padding: 10px;
+}
+
+.pagination {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.pagination button {
+  padding: 6px 10px;
+  background-color: #e2e8f0;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination button.active-page {
+  background-color: #3b82f6;
+  color: white;
+}

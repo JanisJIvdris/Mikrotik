@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import TaskForm from "../components/TaskForm";
+import TaskTable from "../components/TaskTable";
 
 function Dashboard() {
   const [projects, setProjects] = useState([]);
@@ -64,14 +65,8 @@ function Dashboard() {
         projectId={selectedProjectId}
         onTaskCreated={(newTask) => setTasks([...tasks, newTask])}
       />
-      <h3>Tasks:</h3>
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id}>
-            {task.title} - {task.status} - {task.priority}
-          </li>
-        ))}
-      </ul>
+      <h3>Tasks</h3>
+      <TaskTable tasks={tasks} />
     </div>
   );
 }

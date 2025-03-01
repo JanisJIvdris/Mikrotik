@@ -3,15 +3,14 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
+import Navbar from "./components/Navbar";
 import "./styles.css";
 
 function App() {
   return (
     <Router>
       <div>
-        <nav className="navbar">
-          <h1>Project Management Tool</h1>
-        </nav>
+        <Navbar />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

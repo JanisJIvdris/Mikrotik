@@ -46,7 +46,7 @@ function LoginPage() {
         <button type="submit">Login</button>
       </form>
       <p style={{ marginTop: "16px" }}>
-        Don't have an account? <a href="/register">Register here</a>.
+        <a href="/register">Register here</a>.
       </p>
     </div>
   );
