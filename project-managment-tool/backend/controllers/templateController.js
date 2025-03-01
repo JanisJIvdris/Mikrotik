@@ -62,11 +62,10 @@ exports.deleteTemplate = async (req, res) => {
   }
 };
 
-// "Apply" a template: create tasks in bulk
 exports.applyTemplate = async (req, res) => {
   try {
     const { id } = req.params;
-    const { tasks } = req.body; // e.g. an array of tasks
+    const { tasks } = req.body;
 
     const template = await Template.findByPk(id);
     if (!template) {

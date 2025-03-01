@@ -17,14 +17,18 @@ const sequelize = new Sequelize(
 const User = require("./user")(sequelize);
 const Task = require("./task")(sequelize);
 const Template = require("./template")(sequelize);
+const Project = require("./project")(sequelize);
 
 // Set up relationships
 User.hasMany(Task, { foreignKey: "assigneeId" });
 Task.belongsTo(User, { foreignKey: "assigneeId" });
+Project.hasMany(Task, { foreignKey: "projectId" });
+Task.belongsTo(Project, { foreignKey: "projectId" });
 
 module.exports = {
   sequelize,
   User,
   Task,
   Template,
+  Project,
 };

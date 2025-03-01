@@ -9,6 +9,7 @@ const config = require("./config/config");
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const templateRoutes = require("./routes/templateRoutes");
+const projectRoutes = require("./routes/projectRoutes");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/templates", templateRoutes);
+app.use("/projects", projectRoutes);
 
 if (process.env.NODE_ENV !== "test") {
   (async () => {
