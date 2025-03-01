@@ -13,7 +13,6 @@ const sequelize = new Sequelize(
   }
 );
 
-// Initialize models
 const User = require("./user")(sequelize);
 const Task = require("./task")(sequelize);
 const Template = require("./template")(sequelize);

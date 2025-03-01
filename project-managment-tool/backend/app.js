@@ -3,7 +3,7 @@ require("dotenv").config({
 });
 const express = require("express");
 const cors = require("cors");
-const { sequelize } = require("./models");
+const { sequelize, Project } = require("./models");
 const config = require("./config/config");
 
 const authRoutes = require("./routes/authRoutes");
@@ -26,6 +26,8 @@ app.use("/projects", projectRoutes);
 if (process.env.NODE_ENV !== "test") {
   (async () => {
     try {
+      console.log("DEBUG: process.env.NODE_ENV =", process.env.NODE_ENV); //debug
+
       await sequelize.authenticate();
       console.log("Database connected successfully.");
 
@@ -36,6 +38,13 @@ if (process.env.NODE_ENV !== "test") {
         await sequelize.sync();
         console.log("Database synchronized.");
       }
+
+      // Create a default project if none exists
+      const [defaultProject, created] = await Project.findOrCreate({
+        where: { name: "Default Project" },
+        defaults: { description: "Automatically created default project." },
+      });
+      console.log("Default Project ID:", defaultProject.id);
     } catch (error) {
       console.error("Unable to connect to the database:", error);
     }

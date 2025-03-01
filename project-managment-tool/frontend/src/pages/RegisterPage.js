@@ -1,27 +1,26 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("/auth/register", { username, password });
       setMessage(res.data.message);
-      // Optionally redirect to login after successful registration
-      history.push("/login");
+      navigate("/login");
     } catch (err) {
       setMessage(err.response?.data?.message || "Registration failed.");
     }
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Register</h2>
       {message && <p>{message}</p>}
       <form onSubmit={handleRegister}>
