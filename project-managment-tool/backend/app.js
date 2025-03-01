@@ -26,8 +26,6 @@ app.use("/projects", projectRoutes);
 if (process.env.NODE_ENV !== "test") {
   (async () => {
     try {
-      console.log("DEBUG: process.env.NODE_ENV =", process.env.NODE_ENV); //debug
-
       await sequelize.authenticate();
       console.log("Database connected successfully.");
 
