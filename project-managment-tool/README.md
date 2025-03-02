@@ -23,6 +23,23 @@ This Project Management Tool allows authenticated users to create and manage pro
 - **Task Filtering:** Filter tasks by status, priority, and assigned user
 - **Responsive Design:** Modular components that work across device sizes
 - **Reusable Components:** Includes refactored SVG icons as reusable components
+- **Task Tracking Components:** Visual components for tracking current tasks and improving productivity
+  - Priority Breakdown: Visual representation of tasks by priority
+  - Task Stats Summary: Overview of task completion status
+  - Filters: Customizable task filtering options
+
+### Task Fields
+
+Tasks include several useful fields to improve task management:
+
+- Title and description
+- Status (New, In Progress, Completed, Overdue)
+- Priority (Low, Medium, High, Critical)
+- Assigned user
+- Due date
+- Estimated hours
+- Creation and last update timestamps
+- Project association
 
 ## Tech Stack
 
@@ -141,11 +158,50 @@ project-management-tool/
 
 ## Running Tests
 
+**Important:** You must create a `.env.test` file in the backend directory with test-specific environment variables before running tests:
+
+```
+PORT=3000
+DB_PORT=5432
+DB_HOST=db-test
+DB_USER=test_user
+DB_PASS=test_password
+DB_NAME=test_db
+JWT_SECRET=test_secret
+NODE_ENV=test
+```
+
+This file configures the test environment to use a separate database instance to avoid affecting development data.
+
 To run backend tests in an isolated environment:
 
 ```bash
 docker-compose -f docker-compose.test.yml up --build
 ```
+
+## Implementation Notes
+
+### Registration Page
+
+The registration page is included in this project primarily for ease of testing the functionality. In a production environment where this tool would likely be used internally within an organization, user registration would typically be handled through administrative channels or integrated with existing authentication systems rather than through a public registration page.
+
+### Architectural Decisions
+
+While the current implementation meets all required functionalities, there are several refinements that would be considered for a production-level deployment:
+
+- **Component Modularization:** Some components would strongly benefit from further breaking down into smaller, more focused subcomponents.
+- **Template Interface:** A dedicated template editing interface with preview functionality would improve the template creation experience.
+- **Drag-and-Drop Interface:** Implementing a drag-and-drop interface for task management would enhance user experience.
+- **Notification System:** Adding real-time notifications for task assignments and updates would improve team communication.
+
+### Productivity Enhancements
+
+The frontend includes several components specifically designed to improve productivity:
+
+- Priority breakdown charts to quickly visualize high-priority items
+- Task status summaries to track progress at a glance
+- Customizable filters to focus on relevant tasks
+- Project selector for quick navigation between different projects
 
 ## Future Improvements
 
@@ -154,3 +210,6 @@ docker-compose -f docker-compose.test.yml up --build
 - **UI/UX Enhancements:** Refine design, responsiveness, and accessibility
 - **Advanced Testing:** Increase test coverage
 - **Performance Optimization:** Implement pagination for large datasets
+- **Bulk Operations:** Add functionality for bulk task updates and deletions
+- **Team Collaboration:** Add comments and activity logs to tasks
+- **Time Tracking:** Integrate time tracking functionality for tasks
