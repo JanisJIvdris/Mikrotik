@@ -14,6 +14,10 @@ module.exports = (sequelize) => {
     description: {
       type: DataTypes.TEXT,
     },
+    tasks: {
+      type: DataTypes.JSONB,
+      defaultValue: [],
+    },
   });
 
   return Template;
