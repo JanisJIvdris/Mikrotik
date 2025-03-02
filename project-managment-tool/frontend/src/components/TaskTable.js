@@ -5,7 +5,7 @@ function TaskTable({ tasks }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedTaskId, setExpandedTaskId] = useState(null);
 
-  const pageSize = 5;
+  const pageSize = 20;
   const totalPages = Math.ceil(tasks.length / pageSize);
 
   const startIndex = (currentPage - 1) * pageSize;
@@ -32,6 +32,7 @@ function TaskTable({ tasks }) {
   // Function to get priority badge class
   const getPriorityClass = (priority) => {
     const priorityLower = priority?.toLowerCase();
+    if (priorityLower === "critical") return "priority-badge critical";
     if (priorityLower === "high") return "priority-badge high";
     if (priorityLower === "medium") return "priority-badge medium";
     if (priorityLower === "low") return "priority-badge low";

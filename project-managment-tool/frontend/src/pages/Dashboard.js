@@ -97,13 +97,20 @@ function Dashboard() {
     <div className="container">
       <div className="dashboard-header">
         <h2 className="header-title">Dashboard</h2>
-        <button>New Project</button>
       </div>
 
       <TaskStatsSummary taskStats={taskStats} />
 
       <div className="dashboard-layout">
         <div className="sidebar">
+          <div className="card">
+            <h3>Add New Task</h3>
+            <TaskForm
+              projectId={selectedProjectId}
+              onTaskAdded={handleAddTask}
+            />
+          </div>
+
           <ProjectSelector
             projects={projects}
             selectedProjectId={selectedProjectId}
@@ -118,14 +125,6 @@ function Dashboard() {
             showMyTasks={showMyTasks}
             setShowMyTasks={setShowMyTasks}
           />
-
-          <div className="card">
-            <h3>Add New Task</h3>
-            <TaskForm
-              projectId={selectedProjectId}
-              onTaskAdded={handleAddTask}
-            />
-          </div>
         </div>
 
         <div className="main-content">

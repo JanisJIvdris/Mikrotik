@@ -21,7 +21,7 @@
   padding: 12px 16px;
   font-weight: 600;
   color: #6b7280;
-  background-color: #f9fafb;
+  background-color: #f1f5f9;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -141,7 +141,7 @@
 }
 .priority-badge.critical {
   background-color: #8b0000;
-  color: #3f1717;
+  color: #ffffff;
 }
 
 .priority-badge.high {
