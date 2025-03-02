@@ -35,6 +35,31 @@ module.exports = (sequelize) => {
       type: DataTypes.UUID,
       allowNull: true,
     },
+    estimatedHours: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
+    actualHours: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
+    tags: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      // Store tags as comma-separated string
+    },
+    attachments: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    createdById: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    completedDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   });
 
   return Task;

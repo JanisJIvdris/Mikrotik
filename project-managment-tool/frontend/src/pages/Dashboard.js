@@ -17,9 +17,15 @@ function Dashboard() {
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
+  // New state for template application:
+  const [templates, setTemplates] = useState([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState("");
+  const [templateQuantity, setTemplateQuantity] = useState(1);
+
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
+  // Fetch projects
   useEffect(() => {
     const fetchProjects = async () => {
       setIsLoading(true);
@@ -41,6 +47,7 @@ function Dashboard() {
     fetchProjects();
   }, [token]);
 
+  // Fetch tasks for selected project
   useEffect(() => {
     const fetchTasks = async () => {
       if (!selectedProjectId) return;
@@ -67,8 +74,76 @@ function Dashboard() {
     fetchTasks();
   }, [token, selectedProjectId, showMyTasks, userId]);
 
+  // Fetch available templates
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const res = await axios.get("/templates", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setTemplates(res.data);
+        if (res.data.length > 0) {
+          setSelectedTemplateId(res.data[0].id);
+        }
+      } catch (error) {
+        console.error("Error fetching templates:", error);
+      }
+    };
+
+    fetchTemplates();
+  }, [token]);
+
   const handleAddTask = (newTask) => {
     setTasks([...tasks, newTask]);
+  };
+
+  const handleTaskUpdated = (updatedTask) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === updatedTask.id ? updatedTask : task
+    );
+    setTasks(updatedTasks);
+  };
+
+  // Handle applying a selected template with a specified quantity.
+  const handleApplyTemplate = async () => {
+    if (!selectedTemplateId) return;
+    const selectedTemplate = templates.find((t) => t.id === selectedTemplateId);
+    if (!selectedTemplate) return;
+    const quantity = parseInt(templateQuantity, 10) || 1;
+    const tasksToCreate = [];
+    for (let i = 0; i < quantity; i++) {
+      tasksToCreate.push({
+        title: selectedTemplate.name, // using template's name as task title
+        description: selectedTemplate.description,
+        status: selectedTemplate.status,
+        priority: selectedTemplate.priority,
+        dueDate: selectedTemplate.dueDate,
+        assigneeId: selectedTemplate.assigneeId,
+        estimatedHours: selectedTemplate.estimatedHours,
+        actualHours: selectedTemplate.actualHours,
+        tags: selectedTemplate.tags,
+        attachments: selectedTemplate.attachments,
+        createdById: selectedTemplate.createdById,
+        completedDate: selectedTemplate.completedDate,
+        projectId: selectedProjectId,
+      });
+    }
+    try {
+      await axios.post(
+        `/templates/${selectedTemplateId}/apply`,
+        { projectId: selectedProjectId, tasks: tasksToCreate },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("Template applied and tasks created!");
+      // Refresh tasks list
+      const res = await axios.get("/tasks", {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { projectId: selectedProjectId },
+      });
+      setTasks(res.data);
+    } catch (error) {
+      console.error("Error applying template:", error);
+    }
   };
 
   // Filter tasks based on selected filters
@@ -101,6 +176,24 @@ function Dashboard() {
 
       <TaskStatsSummary taskStats={taskStats} />
 
+      {/* Project Selection and Filters Section - Horizontal, Compact Layout */}
+      <div className="filter-strip">
+        <ProjectSelector
+          projects={projects}
+          selectedProjectId={selectedProjectId}
+          setSelectedProjectId={setSelectedProjectId}
+        />
+
+        <Filters
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          priorityFilter={priorityFilter}
+          setPriorityFilter={setPriorityFilter}
+          showMyTasks={showMyTasks}
+          setShowMyTasks={setShowMyTasks}
+        />
+      </div>
+
       <div className="dashboard-layout">
         <div className="sidebar">
           <div className="card">
@@ -111,20 +204,51 @@ function Dashboard() {
             />
           </div>
 
-          <ProjectSelector
-            projects={projects}
-            selectedProjectId={selectedProjectId}
-            setSelectedProjectId={setSelectedProjectId}
-          />
-
-          <Filters
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-            priorityFilter={priorityFilter}
-            setPriorityFilter={setPriorityFilter}
-            showMyTasks={showMyTasks}
-            setShowMyTasks={setShowMyTasks}
-          />
+          {/* Template Application Section */}
+          <div className="card">
+            <h3>Apply Template</h3>
+            {templates.length > 0 ? (
+              <div>
+                <select
+                  value={selectedTemplateId}
+                  onChange={(e) => setSelectedTemplateId(e.target.value)}
+                  className="form-control"
+                >
+                  {templates.map((tpl) => (
+                    <option key={tpl.id} value={tpl.id}>
+                      {tpl.name}
+                    </option>
+                  ))}
+                </select>
+                <div style={{ marginTop: "8px" }}>
+                  <label>Number of Tasks to Create:</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={templateQuantity}
+                    onChange={(e) => setTemplateQuantity(e.target.value)}
+                    className="form-control"
+                    style={{
+                      width: "100px",
+                      display: "inline-block",
+                      marginLeft: "8px",
+                    }}
+                  />
+                </div>
+                <button
+                  onClick={handleApplyTemplate}
+                  className="btn-secondary"
+                  style={{ marginTop: "8px" }}
+                >
+                  Apply Template
+                </button>
+              </div>
+            ) : (
+              <p>
+                No templates available. Create some in the Templates section.
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="main-content">
@@ -151,7 +275,10 @@ function Dashboard() {
                 <div className="spinner"></div>
               </div>
             ) : filteredTasks.length > 0 ? (
-              <TaskTable tasks={filteredTasks} />
+              <TaskTable
+                tasks={filteredTasks}
+                onTaskUpdated={handleTaskUpdated}
+              />
             ) : (
               <EmptyState />
             )}

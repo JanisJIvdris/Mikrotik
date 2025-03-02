@@ -41,7 +41,78 @@
   margin-bottom: 20px;
 }
 
-/* Filter styles */
+/* Compact Filter Strip Styles - FIXED ALIGNMENT */
+.filter-strip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  height: 52px; /* Fixed height for consistency */
+}
+
+.compact-selector,
+.compact-filter {
+  display: flex;
+  align-items: center;
+  height: 32px; /* Fixed height for all filter elements */
+  margin: 0;
+}
+
+.compact-label {
+  margin: 0 8px 0 0;
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  line-height: 32px; /* Match the height of select fields */
+}
+
+.compact-select {
+  padding: 0 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
+  height: 32px; /* Fixed height */
+  margin: 0; /* Remove any margin */
+  line-height: 32px; /* Match line height to height */
+  vertical-align: middle;
+  box-sizing: border-box; /* Ensure padding doesn't affect overall height */
+}
+
+.filters-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-grow: 1;
+  height: 32px; /* Fixed height to match other elements */
+}
+
+.checkbox-filter {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  height: 32px; /* Fixed height to match other elements */
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  height: 32px; /* Fixed height to match other elements */
+}
+
+.checkbox {
+  margin: 0 8px 0 0;
+  vertical-align: middle;
+  position: relative;
+  top: -1px; /* Slight adjustment to perfectly center checkbox */
+}
+
+/* Original Filter styles (for other parts of the app) */
 .filter-group {
   margin-bottom: 16px;
 }
@@ -59,10 +130,6 @@ select {
   border-radius: 4px;
   background-color: white;
   font-size: 14px;
-}
-
-.checkbox {
-  margin-right: 8px;
 }
 
 /* Task summary cards */

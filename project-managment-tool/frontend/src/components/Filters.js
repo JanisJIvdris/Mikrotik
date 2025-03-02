@@ -9,16 +9,13 @@ const Filters = ({
   setShowMyTasks,
 }) => {
   return (
-    <div className="card">
-      <h3>Filters</h3>
-      <div className="filter-group">
-        <label className="filter-label" htmlFor="status-filter">
-          Status
-        </label>
+    <div className="filters-container">
+      <div className="compact-filter">
+        <label className="compact-label">Status:</label>
         <select
-          id="status-filter"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
+          className="compact-select"
         >
           <option value="all">All Statuses</option>
           <option value="new">New</option>
@@ -27,14 +24,12 @@ const Filters = ({
         </select>
       </div>
 
-      <div className="filter-group">
-        <label className="filter-label" htmlFor="priority-filter">
-          Priority
-        </label>
+      <div className="compact-filter">
+        <label className="compact-label">Priority:</label>
         <select
-          id="priority-filter"
           value={priorityFilter}
           onChange={(e) => setPriorityFilter(e.target.value)}
+          className="compact-select"
         >
           <option value="all">All Priorities</option>
           <option value="low">Low</option>
@@ -44,15 +39,15 @@ const Filters = ({
         </select>
       </div>
 
-      <div className="filter-group">
-        <label>
+      <div className="compact-filter checkbox-filter">
+        <label className="checkbox-container">
           <input
             type="checkbox"
             className="checkbox"
             checked={showMyTasks}
             onChange={() => setShowMyTasks(!showMyTasks)}
           />
-          Show Only My Tasks
+          <span className="compact-label">My Tasks Only</span>
         </label>
       </div>
     </div>

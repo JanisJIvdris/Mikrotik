@@ -2,8 +2,14 @@ const { Template, Task } = require("../models");
 
 exports.createTemplate = async (req, res) => {
   try {
-    const { name, description } = req.body;
-    const newTemplate = await Template.create({ name, description });
+    const { name, description, status, priority, dueDate } = req.body;
+    const newTemplate = await Template.create({
+      name,
+      description,
+      status,
+      priority,
+      dueDate,
+    });
     return res.status(201).json(newTemplate);
   } catch (error) {
     return res.status(500).json({ message: "Error creating template." });
@@ -35,9 +41,10 @@ exports.getTemplateById = async (req, res) => {
 exports.updateTemplate = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description } = req.body;
+    // Accept additional fields for update
+    const { name, description, status, priority, dueDate } = req.body;
     const [updated] = await Template.update(
-      { name, description },
+      { name, description, status, priority, dueDate },
       { where: { id } }
     );
     if (!updated) {

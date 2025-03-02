@@ -7,10 +7,13 @@ function TemplatesPage() {
   const [templates, setTemplates] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  // New fields to match task fields
+  const [status, setStatus] = useState("new"); // options: new, in_progress, completed
+  const [priority, setPriority] = useState("medium"); // options: low, medium, high, critical
+  const [dueDate, setDueDate] = useState(""); // Optional due date
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const selectedProjectId = localStorage.getItem("selectedProjectId") || "";
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -36,13 +39,17 @@ function TemplatesPage() {
     try {
       await axios.post(
         "/templates",
-        { name, description },
+        { name, description, status, priority, dueDate },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      // Clear form fields after successful creation
       setName("");
       setDescription("");
+      setStatus("new");
+      setPriority("medium");
+      setDueDate("");
       const res = await axios.get("/templates", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -55,36 +62,21 @@ function TemplatesPage() {
     }
   };
 
-  const handleApplyTemplate = async (templateId) => {
+  // New: Handler to delete a template
+  const handleDeleteTemplate = async (templateId) => {
+    if (!window.confirm("Are you sure you want to delete this template?"))
+      return;
     setLoading(true);
     setError("");
     try {
-      const tasks = [
-        {
-          title: "Task 1 from template",
-          description: "This is a task created from a template",
-          status: "To Do",
-          projectId: selectedProjectId,
-        },
-        {
-          title: "Task 2 from template",
-          description: "This is another task created from a template",
-          status: "To Do",
-          projectId: selectedProjectId,
-        },
-      ];
-
-      await axios.post(
-        `/templates/${templateId}/apply`,
-        { projectId: selectedProjectId, tasks },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      alert("Tasks created from template!");
-      navigate("/");
+      await axios.delete(`/templates/${templateId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Update the local templates list after deletion
+      setTemplates(templates.filter((tpl) => tpl.id !== templateId));
     } catch (err) {
-      console.error("Error applying template", err);
-      setError("Failed to apply template");
+      console.error("Error deleting template", err);
+      setError("Failed to delete template");
     } finally {
       setLoading(false);
     }
@@ -135,6 +127,53 @@ function TemplatesPage() {
               />
             </div>
 
+            {/* New fields for additional task defaults */}
+            <div className="filter-group">
+              <label className="filter-label" htmlFor="template-status">
+                Status
+              </label>
+              <select
+                id="template-status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="form-control"
+              >
+                <option value="new">New</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label className="filter-label" htmlFor="template-priority">
+                Priority
+              </label>
+              <select
+                id="template-priority"
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+                className="form-control"
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label className="filter-label" htmlFor="template-dueDate">
+                Due Date
+              </label>
+              <input
+                id="template-dueDate"
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="form-control"
+              />
+            </div>
+
             <button type="submit" className="btn" disabled={loading}>
               {loading ? "Creating..." : "Create Template"}
             </button>
@@ -153,6 +192,9 @@ function TemplatesPage() {
                   <tr>
                     <th>Name</th>
                     <th>Description</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Due Date</th>
                     <th className="text-right">Actions</th>
                   </tr>
                 </thead>
@@ -161,13 +203,34 @@ function TemplatesPage() {
                     <tr key={tpl.id}>
                       <td>{tpl.name}</td>
                       <td>{tpl.description}</td>
+                      <td>{tpl.status}</td>
+                      <td>{tpl.priority}</td>
+                      <td>{tpl.dueDate ? tpl.dueDate.slice(0, 10) : ""}</td>
                       <td className="text-right">
                         <button
-                          onClick={() => handleApplyTemplate(tpl.id)}
-                          className="btn-secondary"
+                          onClick={() => handleDeleteTemplate(tpl.id)}
+                          style={{
+                            backgroundColor: "#d9534f",
+                            border: "none",
+                            color: "white",
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                          }}
                           disabled={loading}
                         >
-                          {loading ? "Applying..." : "Apply"}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              verticalAlign: "middle",
+                            }}
+                            fill="white"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M3 6h18v2H3zm2 3h14l-1.5 12.5a2 2 0 01-2 1.5H8.5a2 2 0 01-2-1.5L5 9zm5-5h4v2h-4z" />
+                          </svg>
                         </button>
                       </td>
                     </tr>

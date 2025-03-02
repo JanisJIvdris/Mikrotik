@@ -1,3 +1,4 @@
+// backend/models/template.js
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
@@ -14,9 +15,45 @@ module.exports = (sequelize) => {
     description: {
       type: DataTypes.TEXT,
     },
-    tasks: {
-      type: DataTypes.JSONB,
-      defaultValue: [],
+    status: {
+      type: DataTypes.ENUM("new", "in_progress", "completed"),
+      defaultValue: "new",
+    },
+    assigneeId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    priority: {
+      type: DataTypes.ENUM("low", "medium", "high", "critical"),
+      defaultValue: "medium",
+    },
+    dueDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    estimatedHours: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
+    actualHours: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
+    tags: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    attachments: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    createdById: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    completedDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   });
 
