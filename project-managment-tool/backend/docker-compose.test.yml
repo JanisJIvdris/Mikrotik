@@ -11,5 +11,21 @@ services:
       - "5432:5432"
     volumes:
       - test_db_data:/var/lib/postgresql/data
+
+  backend-test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: test
+      DB_HOST: testdb
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASS: password
+      DB_NAME: project_management_test
+    depends_on:
+      - testdb
+    command: ["npm", "test"]
+
 volumes:
   test_db_data:

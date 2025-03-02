@@ -4,12 +4,11 @@ const { sequelize } = require("../models");
 
 let token;
 let userId;
+let projectId;
 
 beforeAll(async () => {
-  // Force sync to reset test database
   await sequelize.sync({ force: true });
 
-  // Register and login a user to obtain a token for protected endpoints
   await request(app).post("/auth/register").send({
     username: "taskUser",
     password: "password",
@@ -20,6 +19,15 @@ beforeAll(async () => {
   });
   token = loginRes.body.token;
   userId = loginRes.body.userId;
+
+  const projectRes = await request(app)
+    .post("/projects")
+    .set("Authorization", `Bearer ${token}`)
+    .send({
+      name: "Test Project",
+      description: "Project created for task tests",
+    });
+  projectId = projectRes.body.id;
 });
 
 afterAll(async () => {
@@ -38,7 +46,7 @@ describe("Task Endpoints", () => {
         assigneeId: userId,
         priority: "high",
         dueDate: "2024-03-01",
-        projectId: "123e4567-e89b-12d3-a456-426614174001",
+        projectId: projectId,
       });
     expect(res.statusCode).toEqual(201);
     expect(res.body).toHaveProperty("id");
