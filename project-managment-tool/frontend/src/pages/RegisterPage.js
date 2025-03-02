@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import "../components/Dashboard.css";
+import "../styles.css";
 import ErrorIcon from "../assets/icons/ErrorIcon";
 import SuccessIcon from "../assets/icons/SuccessIcon";
 
@@ -30,13 +30,10 @@ function RegisterPage() {
       <div className="card">
         {message && (
           <div
-            className="summary-card"
-            style={{
-              backgroundColor: message.includes("failed")
-                ? "#ffebee"
-                : "#e8f5e9",
-              marginBottom: "20px",
-            }}
+            className={`summary-card ${
+              message.includes("failed") ? "icon-red" : "icon-green"
+            }`}
+            style={{ marginBottom: "20px" }}
           >
             <div
               className={`icon-container ${
@@ -60,13 +57,7 @@ function RegisterPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                fontSize: "14px",
-              }}
+              className="form-control"
             />
           </div>
           <div className="filter-group">
@@ -76,29 +67,10 @@ function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                fontSize: "14px",
-              }}
+              className="form-control"
             />
           </div>
-          <button
-            type="submit"
-            style={{
-              backgroundColor: "#3498db",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              padding: "10px 16px",
-              fontSize: "14px",
-              fontWeight: "500",
-              cursor: "pointer",
-              marginTop: "10px",
-            }}
-          >
+          <button type="submit" className="btn">
             Register
           </button>
         </form>

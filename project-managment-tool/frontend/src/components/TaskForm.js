@@ -7,6 +7,7 @@ function TaskForm({ projectId, onTaskAdded }) {
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
   const [dueDate, setDueDate] = useState("");
+  const [error, setError] = useState("");
 
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");

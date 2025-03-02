@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../components/Dashboard.css";
+import "../styles.css";
 import ErrorIcon from "../assets/icons/ErrorIcon";
 
 function LoginPage() {
@@ -31,8 +31,8 @@ function LoginPage() {
       <div className="card">
         {error && (
           <div
-            className="summary-card"
-            style={{ backgroundColor: "#ffebee", marginBottom: "20px" }}
+            className="summary-card icon-red"
+            style={{ marginBottom: "20px" }}
           >
             <div className="icon-container icon-red">
               <ErrorIcon className="icon" />
@@ -48,13 +48,7 @@ function LoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                fontSize: "14px",
-              }}
+              className="form-control"
             />
           </div>
           <div className="filter-group">
@@ -64,29 +58,10 @@ function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                fontSize: "14px",
-              }}
+              className="form-control"
             />
           </div>
-          <button
-            type="submit"
-            style={{
-              backgroundColor: "#3498db",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              padding: "10px 16px",
-              fontSize: "14px",
-              fontWeight: "500",
-              cursor: "pointer",
-              marginTop: "10px",
-            }}
-          >
+          <button type="submit" className="btn">
             Login
           </button>
         </form>
