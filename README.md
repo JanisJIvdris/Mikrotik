@@ -1,4 +1,4 @@
------- Copy of https://github.com/JanisJIvdris/Mikrotik/tree/main/project-managment-tool ---
+------ Copy of https://github.com/JanisJIvdris/Mikrotik/blob/main/project-managment-tool/README.md ---
 # Project Management Tool
 
 A full-stack application for creating and managing projects, tasks, and task templates with user authentication. Built with Node.js, Express, Sequelize, PostgreSQL, and React.
