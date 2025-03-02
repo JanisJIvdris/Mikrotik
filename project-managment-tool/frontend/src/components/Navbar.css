@@ -1,7 +1,7 @@
 .navbar {
-  background-color: #1e293b;
+  background-color: var(--text-primary);
   color: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -13,13 +13,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  height: 64px;
+  padding: 0 var(--space-4);
+  height: var(--space-16);
 }
 
 .navbar-logo {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-semibold);
   color: white;
   letter-spacing: -0.025em;
 }
@@ -32,7 +32,7 @@
 .navbar-links {
   list-style: none;
   display: flex;
-  gap: 24px;
+  gap: var(--space-6);
   margin: 0;
   padding: 0;
   align-items: center;
@@ -43,11 +43,11 @@
 }
 
 .navbar-link {
-  color: #e2e8f0;
+  color: var(--text-light);
   text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem;
-  padding: 8px 0;
+  font-weight: var(--font-medium);
+  font-size: var(--font-size-md);
+  padding: var(--space-2) 0;
   transition: color 0.2s;
   position: relative;
 }
@@ -58,9 +58,9 @@
   width: 0;
   height: 2px;
   display: block;
-  margin-top: 2px;
+  margin-top: var(--space-1);
   left: 0;
-  background: #3b82f6;
+  background: var(--primary);
   transition: width 0.2s;
 }
 
@@ -73,44 +73,43 @@
   width: 100%;
 }
 
-.logout-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #e2e8f0;
-  cursor: pointer;
-  font-weight: 500;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.logout-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  text-decoration: none;
-}
-
 .navbar-user {
   display: flex;
   align-items: center;
 }
 
 .navbar-username {
-  font-weight: 500;
+  font-weight: var(--font-medium);
   background-color: rgba(255, 255, 255, 0.1);
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 0.85rem;
-  color: #e2e8f0;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--text-light);
+}
+
+.logout-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-light);
+  cursor: pointer;
+  font-weight: var(--font-medium);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
 @media (max-width: 640px) {
   .navbar-links {
-    gap: 16px;
+    gap: var(--space-4);
   }
 
   .navbar-logo {
-    font-size: 1.1rem;
+    font-size: var(--font-size-lg);
   }
 }

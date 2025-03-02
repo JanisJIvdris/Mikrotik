@@ -1,4 +1,5 @@
 import React from "react";
+import "./PriorityBreakdown.css";
 
 const PriorityBreakdown = ({ taskStats, totalTasks }) => {
   return (

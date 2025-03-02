@@ -1,0 +1,38 @@
+/* Progress Bars */
+.priority-item {
+  margin-bottom: var(--space-4);
+}
+
+.priority-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: var(--border-light);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.progress-critical {
+  background-color: var(--danger);
+}
+
+.progress-high {
+  background-color: var(--warning);
+}
+
+.progress-medium {
+  background-color: var(--info);
+}
+
+.progress-low {
+  background-color: var(--success);
+}

@@ -1,4 +1,5 @@
 import React from "react";
+import "./TaskStatsSummary.css";
 
 const TaskStatsSummary = ({ taskStats }) => {
   return (

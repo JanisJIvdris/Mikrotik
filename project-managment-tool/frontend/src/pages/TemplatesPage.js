@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import "../styles.css";
 
 function TemplatesPage() {
@@ -14,7 +13,6 @@ function TemplatesPage() {
   const [error, setError] = useState("");
 
   const token = localStorage.getItem("token");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTemplates = async () => {
