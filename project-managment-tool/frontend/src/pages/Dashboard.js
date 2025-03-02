@@ -6,6 +6,7 @@ import ProjectSelector from "../components/ProjectSelector";
 import Filters from "../components/Filters";
 import TaskStatsSummary from "../components/TaskStatsSummary";
 import PriorityBreakdown from "../components/PriorityBreakdown";
+import EmptyIcon from "../assets/icons/EmptyIcon";
 import "../components/Dashboard.css";
 
 function Dashboard() {
@@ -42,7 +43,6 @@ function Dashboard() {
         setIsLoading(false);
       }
     };
-
     fetchProjects();
   }, [token]);
 
@@ -67,7 +67,6 @@ function Dashboard() {
         setIsLoading(false);
       }
     };
-
     fetchTasks();
   }, [token, selectedProjectId, showMyTasks, userId]);
 
@@ -86,7 +85,6 @@ function Dashboard() {
         console.error("Error fetching templates:", error);
       }
     };
-
     fetchTemplates();
   }, [token]);
 
@@ -272,7 +270,12 @@ function Dashboard() {
                 onTaskUpdated={handleTaskUpdated}
               />
             ) : (
-              <EmptyState />
+              <div className="empty-state">
+                <EmptyIcon className="empty-icon" />
+                <p className="empty-text">
+                  No tasks found with the current filters.
+                </p>
+              </div>
             )}
           </div>
 
@@ -282,26 +285,5 @@ function Dashboard() {
     </div>
   );
 }
-
-const EmptyState = () => (
-  <div className="empty-state">
-    <svg
-      className="empty-icon"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1}
-        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-      />
-    </svg>
-    <p className="empty-text">No tasks found with the current filters.</p>
-    <button>Create a new task</button>
-  </div>
-);
 
 export default Dashboard;

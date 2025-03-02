@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../components/Dashboard.css";
+import ErrorIcon from "../assets/icons/ErrorIcon";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -27,7 +28,6 @@ function LoginPage() {
       <div className="dashboard-header">
         <h1 className="header-title">Login</h1>
       </div>
-
       <div className="card">
         {error && (
           <div
@@ -35,25 +35,11 @@ function LoginPage() {
             style={{ backgroundColor: "#ffebee", marginBottom: "20px" }}
           >
             <div className="icon-container icon-red">
-              <svg
-                className="icon"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
+              <ErrorIcon className="icon" />
             </div>
             <p className="stats-text">{error}</p>
           </div>
         )}
-
         <form onSubmit={handleLogin}>
           <div className="filter-group">
             <label className="filter-label">Username:</label>
@@ -71,7 +57,6 @@ function LoginPage() {
               }}
             />
           </div>
-
           <div className="filter-group">
             <label className="filter-label">Password:</label>
             <input
@@ -88,7 +73,6 @@ function LoginPage() {
               }}
             />
           </div>
-
           <button
             type="submit"
             style={{

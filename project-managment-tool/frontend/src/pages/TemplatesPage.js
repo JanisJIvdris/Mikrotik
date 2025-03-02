@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles.css";
+import TrashBinIcon from "../assets/icons/TrashBinIcon";
 
 function TemplatesPage() {
   const [templates, setTemplates] = useState([]);
@@ -59,7 +60,6 @@ function TemplatesPage() {
     }
   };
 
-  // New: Handler to delete a template
   const handleDeleteTemplate = async (templateId) => {
     if (!window.confirm("Are you sure you want to delete this template?"))
       return;
@@ -216,18 +216,14 @@ function TemplatesPage() {
                           }}
                           disabled={loading}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
+                          <TrashBinIcon
+                            className="icon"
                             style={{
                               width: "16px",
                               height: "16px",
                               verticalAlign: "middle",
                             }}
-                            fill="white"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M3 6h18v2H3zm2 3h14l-1.5 12.5a2 2 0 01-2 1.5H8.5a2 2 0 01-2-1.5L5 9zm5-5h4v2h-4z" />
-                          </svg>
+                          />
                         </button>
                       </td>
                     </tr>

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import "../components/Dashboard.css";
+import ErrorIcon from "../assets/icons/ErrorIcon";
+import SuccessIcon from "../assets/icons/SuccessIcon";
 
 function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -25,7 +27,6 @@ function RegisterPage() {
       <div className="dashboard-header">
         <h1 className="header-title">Register</h1>
       </div>
-
       <div className="card">
         {message && (
           <div
@@ -42,34 +43,15 @@ function RegisterPage() {
                 message.includes("failed") ? "icon-red" : "icon-green"
               }`}
             >
-              <svg
-                className="icon"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                {message.includes("failed") ? (
-                  <>
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </>
-                ) : (
-                  <>
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                  </>
-                )}
-              </svg>
+              {message.includes("failed") ? (
+                <ErrorIcon className="icon" />
+              ) : (
+                <SuccessIcon className="icon" />
+              )}
             </div>
             <p className="stats-text">{message}</p>
           </div>
         )}
-
         <form onSubmit={handleRegister}>
           <div className="filter-group">
             <label className="filter-label">Username:</label>
@@ -87,7 +69,6 @@ function RegisterPage() {
               }}
             />
           </div>
-
           <div className="filter-group">
             <label className="filter-label">Password:</label>
             <input
@@ -104,7 +85,6 @@ function RegisterPage() {
               }}
             />
           </div>
-
           <button
             type="submit"
             style={{
