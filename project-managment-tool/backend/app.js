@@ -17,7 +17,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Routes remain without the /api prefix
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/templates", templateRoutes);

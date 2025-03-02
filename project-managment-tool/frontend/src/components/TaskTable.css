@@ -12,6 +12,24 @@
   border-collapse: collapse;
   font-size: 0.9rem;
 }
+.editing-row {
+  background-color: #f5f8ff;
+}
+
+.edit-row {
+  background-color: #f9f9f9;
+  border-top: none;
+}
+
+.edit-row td {
+  padding-top: 0;
+}
+
+.edit-form {
+  border-top: 1px dashed #ccc;
+  padding-top: 15px;
+  margin-top: 5px;
+}
 
 .task-table th {
   background-color: #f8f9fa;
@@ -35,6 +53,15 @@
 
 .task-row:hover {
   background-color: #f8f9fa;
+}
+
+/* Selected row styling */
+.selected-row {
+  background-color: #e9ecef;
+}
+
+.selected-row:hover {
+  background-color: #e2e6ea;
 }
 
 .task-title {
@@ -187,7 +214,9 @@
 
 .save-btn,
 .cancel-btn,
-.edit-btn {
+.edit-btn,
+.delete-btn,
+.confirm-btn {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 0.25rem;
@@ -205,9 +234,11 @@
   background-color: #0b5ed7;
 }
 
-.save-btn:disabled {
+.save-btn:disabled,
+.confirm-btn:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .cancel-btn {
@@ -217,6 +248,12 @@
 
 .cancel-btn:hover {
   background-color: #5c636a;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .edit-btn {
@@ -229,6 +266,53 @@
   background-color: #5c636a;
 }
 
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  font-size: 0.75rem;
+}
+
+.delete-btn:hover {
+  background-color: #bb2d3b;
+}
+
+/* Delete confirmation styles */
+.delete-confirmation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.confirm-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #dc3545;
+}
+
+.confirm-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.yes-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.yes-btn:hover:not(:disabled) {
+  background-color: #bb2d3b;
+}
+
+.no-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.no-btn:hover {
+  background-color: #5c636a;
+}
+
 .actions-cell {
   text-align: center;
 }
@@ -238,4 +322,14 @@
   text-align: center;
   padding: 2rem 0;
   color: #6c757d;
+}
+
+/* Error message */
+.error-message {
+  background-color: #f8d7da;
+  color: #842029;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
 }

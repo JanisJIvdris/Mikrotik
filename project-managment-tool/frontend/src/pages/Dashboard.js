@@ -17,7 +17,6 @@ function Dashboard() {
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  // New state for template application:
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
   const [templateQuantity, setTemplateQuantity] = useState(1);
@@ -51,14 +50,12 @@ function Dashboard() {
   useEffect(() => {
     const fetchTasks = async () => {
       if (!selectedProjectId) return;
-
       setIsLoading(true);
       try {
         const params = { projectId: selectedProjectId };
         if (showMyTasks && userId) {
           params.assigneeId = userId;
         }
-
         const res = await axios.get("/tasks", {
           headers: { Authorization: `Bearer ${token}` },
           params,
@@ -97,10 +94,7 @@ function Dashboard() {
     setTasks([...tasks, newTask]);
   };
 
-  const handleTaskUpdated = (updatedTask) => {
-    const updatedTasks = tasks.map((task) =>
-      task.id === updatedTask.id ? updatedTask : task
-    );
+  const handleTaskUpdated = (updatedTasks) => {
     setTasks(updatedTasks);
   };
 
@@ -113,7 +107,7 @@ function Dashboard() {
     const tasksToCreate = [];
     for (let i = 0; i < quantity; i++) {
       tasksToCreate.push({
-        title: selectedTemplate.name, // using template's name as task title
+        title: selectedTemplate.name,
         description: selectedTemplate.description,
         status: selectedTemplate.status,
         priority: selectedTemplate.priority,
@@ -135,7 +129,6 @@ function Dashboard() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("Template applied and tasks created!");
-      // Refresh tasks list
       const res = await axios.get("/tasks", {
         headers: { Authorization: `Bearer ${token}` },
         params: { projectId: selectedProjectId },
@@ -176,14 +169,13 @@ function Dashboard() {
 
       <TaskStatsSummary taskStats={taskStats} />
 
-      {/* Project Selection and Filters Section - Horizontal, Compact Layout */}
+      {/* Project Selection and Filters */}
       <div className="filter-strip">
         <ProjectSelector
           projects={projects}
           selectedProjectId={selectedProjectId}
           setSelectedProjectId={setSelectedProjectId}
         />
-
         <Filters
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
@@ -237,7 +229,7 @@ function Dashboard() {
                 </div>
                 <button
                   onClick={handleApplyTemplate}
-                  className="btn-secondary"
+                  className="btn"
                   style={{ marginTop: "8px" }}
                 >
                   Apply Template

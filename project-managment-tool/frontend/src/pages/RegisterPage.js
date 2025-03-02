@@ -123,18 +123,6 @@ function RegisterPage() {
           </button>
         </form>
       </div>
-
-      <div className="card">
-        <p style={{ margin: 0, textAlign: "center" }}>
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            style={{ color: "#3498db", textDecoration: "none" }}
-          >
-            Login here.
-          </Link>
-        </p>
-      </div>
     </div>
   );
 }

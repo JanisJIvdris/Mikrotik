@@ -107,18 +107,6 @@ function LoginPage() {
           </button>
         </form>
       </div>
-
-      <div className="card">
-        <p style={{ margin: 0, textAlign: "center" }}>
-          Don't have an account?{" "}
-          <Link
-            to="/register"
-            style={{ color: "#3498db", textDecoration: "none" }}
-          >
-            Register here.
-          </Link>
-        </p>
-      </div>
     </div>
   );
 }

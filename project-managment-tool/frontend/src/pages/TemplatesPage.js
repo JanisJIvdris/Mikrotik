@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../styles.css"; // Reuse the dashboard styles
+import "../styles.css";
 
 function TemplatesPage() {
   const [templates, setTemplates] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  // New fields to match task fields
-  const [status, setStatus] = useState("new"); // options: new, in_progress, completed
-  const [priority, setPriority] = useState("medium"); // options: low, medium, high, critical
-  const [dueDate, setDueDate] = useState(""); // Optional due date
+  const [status, setStatus] = useState("new");
+  const [priority, setPriority] = useState("medium");
+  const [dueDate, setDueDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 

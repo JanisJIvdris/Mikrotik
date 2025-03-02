@@ -19,25 +19,37 @@ function TaskTable({ tasks, onTaskUpdated }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [deleteConfirmationId, setDeleteConfirmationId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const pageSize = 20;
+  const pageSize = 10;
   const totalPages = Math.ceil(tasks.length / pageSize);
-
   const startIndex = (currentPage - 1) * pageSize;
   const currentTasks = tasks.slice(startIndex, startIndex + pageSize);
-
   const token = localStorage.getItem("token");
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    // Close editing form when changing pages
     setEditingTaskId(null);
+    setSelectedTaskId(null);
+    setDeleteConfirmationId(null);
   };
 
-  const startEditing = (task) => {
-    setEditingTaskId(task.id);
+  const selectTask = (taskId, e) => {
+    if (editingTaskId === null && !e.target.closest(".action-btn")) {
+      setSelectedTaskId(taskId === selectedTaskId ? null : taskId);
+      setDeleteConfirmationId(null);
+    }
+  };
 
-    // Initialize form with task data, handling potential nulls
+  const startEditing = (task, e) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    setEditingTaskId(task.id);
+    setSelectedTaskId(null);
+    setDeleteConfirmationId(null);
     setEditFormData({
       title: task.title || "",
       description: task.description || "",
@@ -66,36 +78,31 @@ function TaskTable({ tasks, onTaskUpdated }) {
     setError(null);
 
     try {
-      // Call the API to update the task
-      const res = await axios.put(`/api/tasks/${editingTaskId}`, editFormData, {
+      const updateData = { ...editFormData };
+      if (updateData.assigneeId === "") updateData.assigneeId = null;
+      if (updateData.projectId === "") updateData.projectId = null;
+
+      const res = await axios.put(`/tasks/${editingTaskId}`, updateData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       console.log("Task updated successfully:", res.data);
 
-      // Find the updated task in the original tasks array
       const updatedTaskIndex = tasks.findIndex(
         (task) => task.id === editingTaskId
       );
-
       if (updatedTaskIndex !== -1) {
-        // Create a new array with the updated task
         const updatedTasks = [...tasks];
         updatedTasks[updatedTaskIndex] = {
           ...updatedTasks[updatedTaskIndex],
-          ...editFormData,
+          ...updateData,
         };
-
-        // Call parent callback to update task list
         if (onTaskUpdated) {
           onTaskUpdated(updatedTasks);
         }
       }
-
-      // Close edit mode
       setEditingTaskId(null);
-    } catch (error) {
-      console.error("Error updating task:", error);
+    } catch (err) {
+      console.error("Error updating task:", err);
       setError("Failed to update task. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -107,7 +114,41 @@ function TaskTable({ tasks, onTaskUpdated }) {
     setError(null);
   };
 
-  // Function to get status badge class
+  const showDeleteConfirmation = (taskId, e) => {
+    e.stopPropagation();
+    setDeleteConfirmationId(taskId);
+  };
+
+  const cancelDelete = (e) => {
+    e.stopPropagation();
+    setDeleteConfirmationId(null);
+  };
+
+  const handleDelete = async (taskId, e) => {
+    e.stopPropagation();
+    setIsDeleting(true);
+    try {
+      // Delete endpoint using /tasks/ (no /api prefix)
+      await axios.delete(`/tasks/${taskId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const updatedTasks = tasks.filter((task) => task.id !== taskId);
+      if (onTaskUpdated) {
+        onTaskUpdated(updatedTasks);
+      }
+      setDeleteConfirmationId(null);
+      setSelectedTaskId(null);
+      if (currentTasks.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+    } catch (err) {
+      console.error("Error deleting task:", err);
+      alert("Failed to delete task. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const getStatusClass = (status) => {
     const statusLower = status?.toLowerCase();
     if (statusLower === "completed") return "status-badge completed";
@@ -117,7 +158,6 @@ function TaskTable({ tasks, onTaskUpdated }) {
     return "status-badge";
   };
 
-  // Function to get priority badge class
   const getPriorityClass = (priority) => {
     const priorityLower = priority?.toLowerCase();
     if (priorityLower === "critical") return "priority-badge critical";
@@ -127,16 +167,13 @@ function TaskTable({ tasks, onTaskUpdated }) {
     return "priority-badge";
   };
 
-  // Get unique assignees from tasks for the dropdown
   const getUniqueAssignees = () => {
     const assignees = new Map();
-
     tasks.forEach((task) => {
       if (task.assigneeId && task.assigneeName) {
         assignees.set(task.assigneeId, task.assigneeName);
       }
     });
-
     return Array.from(assignees).map(([id, name]) => ({ id, name }));
   };
 
@@ -167,183 +204,217 @@ function TaskTable({ tasks, onTaskUpdated }) {
             ) : (
               currentTasks.map((task) => {
                 const isEditing = editingTaskId === task.id;
+                const isSelected = selectedTaskId === task.id;
+                const isConfirmingDelete = deleteConfirmationId === task.id;
 
-                // If this task is being edited, show the edit form
-                if (isEditing) {
-                  return (
-                    <tr key={task.id} className="edit-row">
-                      <td colSpan={5}>
-                        <form onSubmit={handleSubmit} className="edit-form">
-                          {error && (
-                            <div className="error-message">{error}</div>
-                          )}
-
-                          <div className="form-grid">
-                            <div className="form-group">
-                              <label htmlFor="title">Title:</label>
-                              <input
-                                type="text"
-                                id="title"
-                                name="title"
-                                value={editFormData.title}
-                                onChange={handleInputChange}
-                                required
-                              />
-                            </div>
-
-                            <div className="form-group">
-                              <label htmlFor="status">Status:</label>
-                              <select
-                                id="status"
-                                name="status"
-                                value={editFormData.status}
-                                onChange={handleInputChange}
-                              >
-                                <option value="new">New</option>
-                                <option value="in_progress">In Progress</option>
-                                <option value="completed">Completed</option>
-                              </select>
-                            </div>
-
-                            <div className="form-group">
-                              <label htmlFor="priority">Priority:</label>
-                              <select
-                                id="priority"
-                                name="priority"
-                                value={editFormData.priority}
-                                onChange={handleInputChange}
-                              >
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                                <option value="critical">Critical</option>
-                              </select>
-                            </div>
-
-                            <div className="form-group">
-                              <label htmlFor="dueDate">Due Date:</label>
-                              <input
-                                type="date"
-                                id="dueDate"
-                                name="dueDate"
-                                value={editFormData.dueDate}
-                                onChange={handleInputChange}
-                              />
-                            </div>
-
-                            <div className="form-group">
-                              <label htmlFor="assigneeId">Assignee:</label>
-                              <select
-                                id="assigneeId"
-                                name="assigneeId"
-                                value={editFormData.assigneeId}
-                                onChange={handleInputChange}
-                              >
-                                <option value="">Unassigned</option>
-                                {uniqueAssignees.map((assignee) => (
-                                  <option key={assignee.id} value={assignee.id}>
-                                    {assignee.name}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-
-                            <div className="form-group">
-                              <label htmlFor="estimatedHours">
-                                Estimated Hours:
-                              </label>
-                              <input
-                                type="number"
-                                id="estimatedHours"
-                                name="estimatedHours"
-                                value={editFormData.estimatedHours}
-                                onChange={handleInputChange}
-                                min="0"
-                                step="0.5"
-                              />
-                            </div>
-
-                            <div className="form-group">
-                              <label htmlFor="tags">Tags:</label>
-                              <input
-                                type="text"
-                                id="tags"
-                                name="tags"
-                                value={editFormData.tags}
-                                onChange={handleInputChange}
-                                placeholder="Comma separated tags"
-                              />
-                            </div>
-
-                            <div className="form-group full-width">
-                              <label htmlFor="description">Description:</label>
-                              <textarea
-                                id="description"
-                                name="description"
-                                value={editFormData.description}
-                                onChange={handleInputChange}
-                                rows="3"
-                              ></textarea>
-                            </div>
-                          </div>
-
-                          <div className="form-actions">
+                return (
+                  <React.Fragment key={task.id}>
+                    {/* Task row - always shown */}
+                    <tr
+                      className={`task-row ${
+                        isSelected ? "selected-row" : ""
+                      } ${isEditing ? "editing-row" : ""}`}
+                      onClick={(e) => selectTask(task.id, e)}
+                    >
+                      <td className="task-title">{task.title}</td>
+                      <td>
+                        <span className={getStatusClass(task.status)}>
+                          {task.status}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={getPriorityClass(task.priority)}>
+                          {task.priority}
+                        </span>
+                      </td>
+                      <td>
+                        {task.dueDate
+                          ? new Date(task.dueDate).toLocaleDateString()
+                          : "N/A"}
+                      </td>
+                      <td className="actions-cell">
+                        {deleteConfirmationId === task.id ? (
+                          <div className="delete-confirmation">
+                            <span className="confirm-text">Delete?</span>
                             <button
-                              type="submit"
-                              className="save-btn"
-                              disabled={isSubmitting}
+                              className="confirm-btn yes-btn action-btn"
+                              onClick={(e) => handleDelete(task.id, e)}
+                              disabled={isDeleting}
                             >
-                              {isSubmitting ? "Saving..." : "Save Changes"}
+                              {isDeleting ? "..." : "Yes"}
                             </button>
                             <button
-                              type="button"
-                              className="cancel-btn"
-                              onClick={cancelEditing}
-                              disabled={isSubmitting}
+                              className="confirm-btn no-btn action-btn"
+                              onClick={cancelDelete}
                             >
-                              Cancel
+                              No
                             </button>
                           </div>
-                        </form>
+                        ) : (
+                          <div className="action-buttons">
+                            <button
+                              className="edit-btn action-btn"
+                              onClick={(e) => startEditing(task, e)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="delete-btn action-btn"
+                              onClick={(e) =>
+                                showDeleteConfirmation(task.id, e)
+                              }
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
-                  );
-                }
 
-                // Default view for non-editing rows
-                return (
-                  <tr
-                    key={task.id}
-                    className="task-row"
-                    onClick={() => startEditing(task)}
-                  >
-                    <td className="task-title">{task.title}</td>
-                    <td>
-                      <span className={getStatusClass(task.status)}>
-                        {task.status}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={getPriorityClass(task.priority)}>
-                        {task.priority}
-                      </span>
-                    </td>
-                    <td>
-                      {task.dueDate
-                        ? new Date(task.dueDate).toLocaleDateString()
-                        : "N/A"}
-                    </td>
-                    <td className="actions-cell">
-                      <button className="edit-btn">Edit</button>
-                    </td>
-                  </tr>
+                    {/* Edit form row - only shown when editing */}
+                    {isEditing && (
+                      <tr className="edit-row">
+                        <td colSpan={5}>
+                          <form onSubmit={handleSubmit} className="edit-form">
+                            {error && (
+                              <div className="error-message">{error}</div>
+                            )}
+                            <div className="form-grid">
+                              <div className="form-group">
+                                <label htmlFor="title">Title:</label>
+                                <input
+                                  type="text"
+                                  id="title"
+                                  name="title"
+                                  value={editFormData.title}
+                                  onChange={handleInputChange}
+                                  required
+                                />
+                              </div>
+                              <div className="form-group">
+                                <label htmlFor="status">Status:</label>
+                                <select
+                                  id="status"
+                                  name="status"
+                                  value={editFormData.status}
+                                  onChange={handleInputChange}
+                                >
+                                  <option value="new">New</option>
+                                  <option value="in_progress">
+                                    In Progress
+                                  </option>
+                                  <option value="completed">Completed</option>
+                                </select>
+                              </div>
+                              <div className="form-group">
+                                <label htmlFor="priority">Priority:</label>
+                                <select
+                                  id="priority"
+                                  name="priority"
+                                  value={editFormData.priority}
+                                  onChange={handleInputChange}
+                                >
+                                  <option value="low">Low</option>
+                                  <option value="medium">Medium</option>
+                                  <option value="high">High</option>
+                                  <option value="critical">Critical</option>
+                                </select>
+                              </div>
+                              <div className="form-group">
+                                <label htmlFor="dueDate">Due Date:</label>
+                                <input
+                                  type="date"
+                                  id="dueDate"
+                                  name="dueDate"
+                                  value={editFormData.dueDate}
+                                  onChange={handleInputChange}
+                                />
+                              </div>
+                              <div className="form-group">
+                                <label htmlFor="assigneeId">Assignee:</label>
+                                <select
+                                  id="assigneeId"
+                                  name="assigneeId"
+                                  value={editFormData.assigneeId}
+                                  onChange={handleInputChange}
+                                >
+                                  <option value="">Unassigned</option>
+                                  {uniqueAssignees.map((assignee) => (
+                                    <option
+                                      key={assignee.id}
+                                      value={assignee.id}
+                                    >
+                                      {assignee.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="form-group">
+                                <label htmlFor="estimatedHours">
+                                  Estimated Hours:
+                                </label>
+                                <input
+                                  type="number"
+                                  id="estimatedHours"
+                                  name="estimatedHours"
+                                  value={editFormData.estimatedHours}
+                                  onChange={handleInputChange}
+                                  min="0"
+                                  step="0.5"
+                                />
+                              </div>
+                              <div className="form-group">
+                                <label htmlFor="tags">Tags:</label>
+                                <input
+                                  type="text"
+                                  id="tags"
+                                  name="tags"
+                                  value={editFormData.tags}
+                                  onChange={handleInputChange}
+                                  placeholder="Comma separated tags"
+                                />
+                              </div>
+                              <div className="form-group full-width">
+                                <label htmlFor="description">
+                                  Description:
+                                </label>
+                                <textarea
+                                  id="description"
+                                  name="description"
+                                  value={editFormData.description}
+                                  onChange={handleInputChange}
+                                  rows="3"
+                                ></textarea>
+                              </div>
+                            </div>
+                            <div className="form-actions">
+                              <button
+                                type="submit"
+                                className="save-btn"
+                                disabled={isSubmitting}
+                              >
+                                {isSubmitting ? "Saving..." : "Save Changes"}
+                              </button>
+                              <button
+                                type="button"
+                                className="cancel-btn"
+                                onClick={cancelEditing}
+                                disabled={isSubmitting}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </form>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 );
               })
             )}
           </tbody>
         </table>
       </div>
-
       {totalPages > 1 && (
         <div className="pagination">
           <button
@@ -353,7 +424,6 @@ function TaskTable({ tasks, onTaskUpdated }) {
           >
             &laquo;
           </button>
-
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
@@ -367,7 +437,6 @@ function TaskTable({ tasks, onTaskUpdated }) {
               {page}
             </button>
           ))}
-
           <button
             className="pagination-arrow"
             onClick={() =>
