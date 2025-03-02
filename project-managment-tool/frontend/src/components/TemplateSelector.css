@@ -1,0 +1,33 @@
+/* src/components/TemplateSelector.css */
+.template-selector-card {
+  margin-bottom: 20px;
+}
+
+.template-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.template-select {
+  width: 100%;
+}
+
+.quantity-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-input {
+  width: 100px;
+}
+
+.apply-template-btn {
+  width: 100%;
+}
+
+.no-templates-message {
+  color: #666;
+  font-style: italic;
+}

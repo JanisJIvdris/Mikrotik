@@ -6,6 +6,7 @@ import ProjectSelector from "../components/ProjectSelector";
 import Filters from "../components/Filters";
 import TaskStatsSummary from "../components/TaskStatsSummary";
 import PriorityBreakdown from "../components/PriorityBreakdown";
+import TemplateSelector from "../components/TemplateSelector";
 import EmptyIcon from "../assets/icons/EmptyIcon";
 import "../components/Dashboard.css";
 
@@ -194,51 +195,15 @@ function Dashboard() {
             />
           </div>
 
-          {/* Template Application Section */}
-          <div className="card">
-            <h3>Apply Template</h3>
-            {templates.length > 0 ? (
-              <div>
-                <select
-                  value={selectedTemplateId}
-                  onChange={(e) => setSelectedTemplateId(e.target.value)}
-                  className="form-control"
-                >
-                  {templates.map((tpl) => (
-                    <option key={tpl.id} value={tpl.id}>
-                      {tpl.name}
-                    </option>
-                  ))}
-                </select>
-                <div style={{ marginTop: "8px" }}>
-                  <label>Number of Tasks to Create:</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={templateQuantity}
-                    onChange={(e) => setTemplateQuantity(e.target.value)}
-                    className="form-control"
-                    style={{
-                      width: "100px",
-                      display: "inline-block",
-                      marginLeft: "8px",
-                    }}
-                  />
-                </div>
-                <button
-                  onClick={handleApplyTemplate}
-                  className="btn"
-                  style={{ marginTop: "8px" }}
-                >
-                  Apply Template
-                </button>
-              </div>
-            ) : (
-              <p>
-                No templates available. Create some in the Templates section.
-              </p>
-            )}
-          </div>
+          {/* Template Application Section - Now using the TemplateSelector component */}
+          <TemplateSelector
+            templates={templates}
+            selectedTemplateId={selectedTemplateId}
+            setSelectedTemplateId={setSelectedTemplateId}
+            templateQuantity={templateQuantity}
+            setTemplateQuantity={setTemplateQuantity}
+            onApplyTemplate={handleApplyTemplate}
+          />
         </div>
 
         <div className="main-content">

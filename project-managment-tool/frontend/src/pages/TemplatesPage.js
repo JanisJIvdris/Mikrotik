@@ -92,7 +92,6 @@ function TemplatesPage() {
       )}
 
       <div className="dashboard-layout">
-        {/* Create Template Card */}
         <div className="card">
           <h3>Create Template</h3>
           <form onSubmit={handleCreateTemplate}>
