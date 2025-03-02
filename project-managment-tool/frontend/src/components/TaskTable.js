@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// frontend/src/components/TaskTable.js
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./TaskTable.css";
 
@@ -23,11 +24,47 @@ function TaskTable({ tasks, onTaskUpdated }) {
   const [deleteConfirmationId, setDeleteConfirmationId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // New state for registered users
+  const [users, setUsers] = useState([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [userFetchError, setUserFetchError] = useState(null);
+
   const pageSize = 10;
   const totalPages = Math.ceil(tasks.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const currentTasks = tasks.slice(startIndex, startIndex + pageSize);
   const token = localStorage.getItem("token");
+
+  // Fetch registered users from the backend
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setIsLoadingUsers(true);
+      setUserFetchError(null);
+      try {
+        const res = await axios.get("/users", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        // Expecting res.data to be an array of users
+        if (Array.isArray(res.data)) {
+          setUsers(res.data);
+        } else if (res.data && Array.isArray(res.data.users)) {
+          setUsers(res.data.users);
+        } else {
+          setUserFetchError("Received unexpected user data format.");
+        }
+      } catch (err) {
+        console.error("Error fetching users:", err);
+        setUserFetchError(`Failed to fetch users: ${err.message}`);
+      } finally {
+        setIsLoadingUsers(false);
+      }
+    };
+    if (token) {
+      fetchUsers();
+    } else {
+      setIsLoadingUsers(false);
+    }
+  }, [token]);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -44,9 +81,7 @@ function TaskTable({ tasks, onTaskUpdated }) {
   };
 
   const startEditing = (task, e) => {
-    if (e) {
-      e.stopPropagation();
-    }
+    if (e) e.stopPropagation();
     setEditingTaskId(task.id);
     setSelectedTaskId(null);
     setDeleteConfirmationId(null);
@@ -56,7 +91,8 @@ function TaskTable({ tasks, onTaskUpdated }) {
       status: task.status || "new",
       priority: task.priority || "medium",
       dueDate: task.dueDate ? task.dueDate.slice(0, 10) : "",
-      assigneeId: task.assigneeId || "",
+      // Convert assigneeId to a string so that the select works correctly
+      assigneeId: task.assigneeId ? String(task.assigneeId) : "",
       projectId: task.projectId || "",
       estimatedHours: task.estimatedHours || "",
       tags: task.tags || "",
@@ -76,17 +112,13 @@ function TaskTable({ tasks, onTaskUpdated }) {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-
     try {
       const updateData = { ...editFormData };
       if (updateData.assigneeId === "") updateData.assigneeId = null;
       if (updateData.projectId === "") updateData.projectId = null;
-
       const res = await axios.put(`/tasks/${editingTaskId}`, updateData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Task updated successfully:", res.data);
-
       const updatedTaskIndex = tasks.findIndex(
         (task) => task.id === editingTaskId
       );
@@ -103,7 +135,9 @@ function TaskTable({ tasks, onTaskUpdated }) {
       setEditingTaskId(null);
     } catch (err) {
       console.error("Error updating task:", err);
-      setError("Failed to update task. Please try again.");
+      setError(
+        `Failed to update task: ${err.response?.data?.message || err.message}`
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -128,7 +162,6 @@ function TaskTable({ tasks, onTaskUpdated }) {
     e.stopPropagation();
     setIsDeleting(true);
     try {
-      // Delete endpoint using /tasks/ (no /api prefix)
       await axios.delete(`/tasks/${taskId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -167,17 +200,12 @@ function TaskTable({ tasks, onTaskUpdated }) {
     return "priority-badge";
   };
 
-  const getUniqueAssignees = () => {
-    const assignees = new Map();
-    tasks.forEach((task) => {
-      if (task.assigneeId && task.assigneeName) {
-        assignees.set(task.assigneeId, task.assigneeName);
-      }
-    });
-    return Array.from(assignees).map(([id, name]) => ({ id, name }));
+  // New helper to get the username from a given assigneeId
+  const getAssigneeName = (assigneeId) => {
+    if (!assigneeId) return "Unassigned";
+    const user = users.find((u) => String(u.id) === assigneeId);
+    return user ? user.username : "Unknown User";
   };
-
-  const uniqueAssignees = getUniqueAssignees();
 
   return (
     <div className="task-table-wrapper">
@@ -185,11 +213,12 @@ function TaskTable({ tasks, onTaskUpdated }) {
         <table className="task-table">
           <thead>
             <tr>
-              <th style={{ width: "40%" }}>Title</th>
+              <th style={{ width: "35%" }}>Title</th>
               <th style={{ width: "15%" }}>Status</th>
               <th style={{ width: "15%" }}>Priority</th>
               <th style={{ width: "15%" }}>Due Date</th>
-              <th style={{ width: "15%" }} className="text-center">
+              <th style={{ width: "10%" }}>Assignee</th>
+              <th style={{ width: "10%" }} className="text-center">
                 Actions
               </th>
             </tr>
@@ -197,7 +226,7 @@ function TaskTable({ tasks, onTaskUpdated }) {
           <tbody>
             {currentTasks.length === 0 ? (
               <tr>
-                <td colSpan={5} className="empty-state">
+                <td colSpan={6} className="empty-state">
                   No tasks available
                 </td>
               </tr>
@@ -206,10 +235,8 @@ function TaskTable({ tasks, onTaskUpdated }) {
                 const isEditing = editingTaskId === task.id;
                 const isSelected = selectedTaskId === task.id;
                 const isConfirmingDelete = deleteConfirmationId === task.id;
-
                 return (
                   <React.Fragment key={task.id}>
-                    {/* Task row - always shown */}
                     <tr
                       className={`task-row ${
                         isSelected ? "selected-row" : ""
@@ -232,6 +259,7 @@ function TaskTable({ tasks, onTaskUpdated }) {
                           ? new Date(task.dueDate).toLocaleDateString()
                           : "N/A"}
                       </td>
+                      <td>{getAssigneeName(task.assigneeId)}</td>
                       <td className="actions-cell">
                         {deleteConfirmationId === task.id ? (
                           <div className="delete-confirmation">
@@ -270,11 +298,9 @@ function TaskTable({ tasks, onTaskUpdated }) {
                         )}
                       </td>
                     </tr>
-
-                    {/* Edit form row - only shown when editing */}
                     {isEditing && (
                       <tr className="edit-row">
-                        <td colSpan={5}>
+                        <td colSpan={6}>
                           <form onSubmit={handleSubmit} className="edit-form">
                             {error && (
                               <div className="error-message">{error}</div>
@@ -332,22 +358,38 @@ function TaskTable({ tasks, onTaskUpdated }) {
                               </div>
                               <div className="form-group">
                                 <label htmlFor="assigneeId">Assignee:</label>
-                                <select
-                                  id="assigneeId"
-                                  name="assigneeId"
-                                  value={editFormData.assigneeId}
-                                  onChange={handleInputChange}
-                                >
-                                  <option value="">Unassigned</option>
-                                  {uniqueAssignees.map((assignee) => (
-                                    <option
-                                      key={assignee.id}
-                                      value={assignee.id}
-                                    >
-                                      {assignee.name}
-                                    </option>
-                                  ))}
-                                </select>
+                                {isLoadingUsers ? (
+                                  <div className="loading-indicator">
+                                    Loading users...
+                                  </div>
+                                ) : userFetchError ? (
+                                  <div className="error-message small">
+                                    {userFetchError}
+                                  </div>
+                                ) : (
+                                  <select
+                                    id="assigneeId"
+                                    name="assigneeId"
+                                    value={editFormData.assigneeId}
+                                    onChange={handleInputChange}
+                                  >
+                                    <option value="">Unassigned</option>
+                                    {users.length > 0 ? (
+                                      users.map((user) => (
+                                        <option
+                                          key={user.id}
+                                          value={String(user.id)}
+                                        >
+                                          {user.username}
+                                        </option>
+                                      ))
+                                    ) : (
+                                      <option disabled>
+                                        No users available
+                                      </option>
+                                    )}
+                                  </select>
+                                )}
                               </div>
                               <div className="form-group">
                                 <label htmlFor="estimatedHours">

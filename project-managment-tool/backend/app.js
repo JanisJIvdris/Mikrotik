@@ -10,6 +10,7 @@ const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const templateRoutes = require("./routes/templateRoutes");
 const projectRoutes = require("./routes/projectRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/templates", templateRoutes);
 app.use("/projects", projectRoutes);
+app.use("/users", userRoutes);
 
 if (process.env.NODE_ENV !== "test") {
   (async () => {
