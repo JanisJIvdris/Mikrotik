@@ -1,4 +1,3 @@
-// frontend/src/components/TaskTable.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./TaskTable.css";
@@ -44,7 +43,6 @@ function TaskTable({ tasks, onTaskUpdated }) {
         const res = await axios.get("/users", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // Expecting res.data to be an array of users
         if (Array.isArray(res.data)) {
           setUsers(res.data);
         } else if (res.data && Array.isArray(res.data.users)) {
@@ -91,7 +89,6 @@ function TaskTable({ tasks, onTaskUpdated }) {
       status: task.status || "new",
       priority: task.priority || "medium",
       dueDate: task.dueDate ? task.dueDate.slice(0, 10) : "",
-      // Convert assigneeId to a string so that the select works correctly
       assigneeId: task.assigneeId ? String(task.assigneeId) : "",
       projectId: task.projectId || "",
       estimatedHours: task.estimatedHours || "",
@@ -200,7 +197,7 @@ function TaskTable({ tasks, onTaskUpdated }) {
     return "priority-badge";
   };
 
-  // New helper to get the username from a given assigneeId
+  // Helper to get the username from a given assigneeId
   const getAssigneeName = (assigneeId) => {
     if (!assigneeId) return "Unassigned";
     const user = users.find((u) => String(u.id) === assigneeId);

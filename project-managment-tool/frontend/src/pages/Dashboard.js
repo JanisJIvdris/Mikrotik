@@ -195,7 +195,6 @@ function Dashboard() {
             />
           </div>
 
-          {/* Template Application Section - Now using the TemplateSelector component */}
           <TemplateSelector
             templates={templates}
             selectedTemplateId={selectedTemplateId}

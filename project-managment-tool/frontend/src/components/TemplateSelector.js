@@ -1,4 +1,3 @@
-// src/components/TemplateSelector.js
 import React from "react";
 import "./TemplateSelector.css";
 

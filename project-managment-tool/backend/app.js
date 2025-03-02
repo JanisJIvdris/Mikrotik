@@ -14,11 +14,9 @@ const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes remain without the /api prefix
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/templates", templateRoutes);
