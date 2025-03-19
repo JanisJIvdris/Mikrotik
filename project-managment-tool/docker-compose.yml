@@ -11,6 +11,11 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app:
     build: ./backend
@@ -19,10 +24,16 @@ services:
     ports:
       - "3002:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
       - ./backend/.env
     command: npm start
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   frontend:
     build: ./frontend
@@ -31,7 +42,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - app
+      app:
+        condition: service_healthy
     env_file:
       - ./frontend/.env
     volumes:

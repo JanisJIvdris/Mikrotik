@@ -11,6 +11,11 @@ services:
       - "5432:5432"
     volumes:
       - test_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend-test-runner:
     build:
@@ -24,7 +29,8 @@ services:
       DB_PASS: password
       DB_NAME: project_management_test
     depends_on:
-      - testdb
+      testdb:
+        condition: service_healthy
     command: ["npm", "test"]
 
 volumes:

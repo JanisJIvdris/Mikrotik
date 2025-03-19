@@ -23,9 +23,14 @@ app.use("/templates", templateRoutes);
 app.use("/projects", projectRoutes);
 app.use("/users", userRoutes);
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK" });
+});
+
 if (process.env.NODE_ENV !== "test") {
   (async () => {
     try {
+      // Authenticate database connection
       await sequelize.authenticate();
       console.log("Database connected successfully.");
 
@@ -43,15 +48,17 @@ if (process.env.NODE_ENV !== "test") {
         defaults: { description: "Automatically created default project." },
       });
       console.log("Default Project ID:", defaultProject.id);
+
+      // Start the server only if the database is fully initialized
+      const PORT = config.PORT;
+      app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+      });
     } catch (error) {
-      console.error("Unable to connect to the database:", error);
+      console.error("Critical error during database initialization:", error);
+      process.exit(1); // Exits the process if initialization fails
     }
   })();
-
-  const PORT = config.PORT;
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
 }
 
 app.use((err, req, res, next) => {
