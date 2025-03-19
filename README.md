@@ -141,11 +141,16 @@ project-management-tool/
    NODE_ENV=development
    ```
 
-   In the frontend directory, create a `.env` file if needed:
+   **Important:**
 
-   ```
-   NODE_ENV=development
-   ```
+If you change these ports, you must update them accordingly in docker-compose.yml (for example, ports: - "3002:3000" or "5433:5432"), because currently docker-compose.yml is set to use port vlaues that are set in .env file examples.
+Inside Docker containers, the database is on port 5432, and the Node app typically listens on port 3000. The left side of the port mapping (e.g. 3002) is the host port, and the right side (e.g. 3000) is the container's internal port.
+
+In the frontend directory, create a `.env` file if needed:
+
+```
+NODE_ENV=development
+```
 
 3. **Build and Run the Containers:**
    From the project root, run:
@@ -217,6 +222,9 @@ The frontend includes several components specifically designed to improve produc
 - **Service Health Checks:** Docker Compose uses health checks to ensure:
   - The PostgreSQL container is ready before the backend starts (using `pg_isready`).
   - The backend responds on the `/health` endpoint before the frontend starts. If a service fails its health check, dependent services will not start, preventing the website from running in a partially initialized state.
+- **Port Mapping:**
+  - By default, the internal database container port is 5432. The Node app container listens on 3000 internally.
+  - If you change PORT or DB_PORT in your .env, you must also update the corresponding mappings in docker-compose.yml. Otherwise, your container might fail health checks or refuse connections.
 
 ## Future Improvements
 
