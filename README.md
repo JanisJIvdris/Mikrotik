@@ -1,4 +1,3 @@
------- Copy of https://github.com/JanisJIvdris/Mikrotik/blob/main/project-managment-tool/README.md ---
 # Project Management Tool
 
 A full-stack application for creating and managing projects, tasks, and task templates with user authentication. Built with Node.js, Express, Sequelize, PostgreSQL, and React.
@@ -149,10 +148,14 @@ project-management-tool/
    ```
 
 3. **Build and Run the Containers:**
+   From the project root, run:
 
    ```bash
    docker-compose up --build
    ```
+
+- The backend uses a fail-fast mechanism. If there’s a critical error during database initialization (such as incorrect environment variables or schema sync issues), the backend logs the error and exits immediately.
+- The backend exposes a /health endpoint used by Docker Compose health checks to confirm that the service is operational.
 
 4. **Access the Application:**
    - http://localhost:3000
@@ -177,6 +180,7 @@ This file configures the test environment to use a separate database instance to
 To run backend tests in an isolated environment:
 
 ```bash
+cd backend
 docker-compose -f docker-compose.test.yml up --build
 ```
 
@@ -203,6 +207,16 @@ The frontend includes several components specifically designed to improve produc
 - Task status summaries to track progress at a glance
 - Customizable filters to focus on relevant tasks
 - Project selector for quick navigation between different projects
+
+# Troubleshooting & Setup Clarifications
+
+- **Database Initialization Failures:** If the database fails to initialize (e.g., due to misconfigured environment variables or schema errors), the backend will log a critical error and exit (fail-fast).
+  - Check container logs with `docker-compose logs app` to diagnose the issue.
+  - Verify that the `.env` and `.env.test` files have the correct values.
+  - The backend health check (via the `/health` endpoint) ensures that the backend is marked as healthy only if it is fully initialized.
+- **Service Health Checks:** Docker Compose uses health checks to ensure:
+  - The PostgreSQL container is ready before the backend starts (using `pg_isready`).
+  - The backend responds on the `/health` endpoint before the frontend starts. If a service fails its health check, dependent services will not start, preventing the website from running in a partially initialized state.
 
 ## Future Improvements
 
