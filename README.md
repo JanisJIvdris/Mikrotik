@@ -134,9 +134,9 @@ project-management-tool/
    PORT=3000
    DB_PORT=5432
    DB_HOST=db
-   DB_USER=your_db_user
-   DB_PASS=your_db_password
-   DB_NAME=your_db_name
+   POSTGRES_USER=your_db_user
+   POSTGRES_PASSWORD=your_db_password
+   POSTGRES_DB=your_db_name
    JWT_SECRET=your_jwt_secret
    NODE_ENV=development
    ```
@@ -173,10 +173,10 @@ NODE_ENV=development
 PORT=3000
 DB_PORT=5432
 DB_HOST=db-test
-DB_USER=test_user
-DB_PASS=test_password
-DB_NAME=test_db
-JWT_SECRET=test_secret
+POSTGRES_USER=test_user
+POSTGRES_PASSWORD=test_password
+POSTGRES_DB=test_db
+JWT_SECRET=<test secret>
 NODE_ENV=test
 ```
 
